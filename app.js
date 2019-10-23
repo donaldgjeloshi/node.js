@@ -17,11 +17,15 @@ const defaultPage = `<html>
 
 /* Register a callback for request events */
 server.on("request", (request, response) => {
-  response.setHeader("Content-Type", "text/html");
+  if (request.url === "/") {
+    response.writeHead(301, { Location: "/index.html" });
+    return response.end();
+  }
   if (request.url === "/index.html") {
+    response.setHeader("Content-Type", "text/html");
     return response.end(welcomePage);
   }
-  response.statusCode = 404;
+  response.setHeader("Content-Type", "text/html");
   response.end(defaultPage);
 });
 
