@@ -14,18 +14,38 @@ const defaultPage = `<html>
  <h2>Take me <a href="/index.html">home</a>.</h2>
  </body>
  </html>`;
+const todoPage = `<html>
+ <head><title>My First Page</title></head>
+ <body>
+  <form action="/todo/add" method="POST">
+    <div><input type="text" name="todo" autofocus/></div>
+    <div><button type="submit">Create</button></div>
+  </form>
+ </body>
+ </html>`;
 
 /* Register a callback for request events */
 server.on("request", (request, response) => {
-  if (request.url === "/") {
+  const { url } = request;
+  if (url === "/") {
     response.writeHead(301, { Location: "/index.html" });
     return response.end();
-  }
-  if (request.url === "/index.html") {
+  } else {
     response.setHeader("Content-Type", "text/html");
-    return response.end(welcomePage);
+    if (url === "/index.html") {
+      return response.end(welcomePage);
+    } else if (url === "/todo.html") {
+      return response.end(todoPage);
+    } else if (url === "/todo/add") {
+      console.log(request.method);
+      response.writeHead(302, { Location: "/" });
+      return response.end();
+    }
   }
-  response.setHeader("Content-Type", "text/html");
+  /** ich kann so schreiben dann wird kein 404 Error in der Seite haben und dann default page*/
+  //response.setHeader("Content-Type", "text/html");
+  /* Oder ich kann ein Fehler generieren und dann default page */
+  response.statusCode = 404;
   response.end(defaultPage);
 });
 
